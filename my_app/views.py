@@ -19,7 +19,7 @@ class ProductViewSet(viewsets.ViewSet):
         return Response(serializer.data)
     
     def create(self, request):
-        serializer = ProductViewSet(data=request.data)
+        serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -46,3 +46,45 @@ class ProductViewSet(viewsets.ViewSet):
         return [permission() for permission in permission_classes]
 
 
+class OrderViewSet(viewsets.ViewSet):
+    def list(self, request):
+        queryset = Order.objects.all()
+        serializer = OrderSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    def retrieve(self, request, pk=None):
+        queryset = Order.objects.all()
+        order = get_object_or_404(queryset, pk=pk)
+        serializer =  OrderSerializer(order)
+        return Response(serializer.data)
+    
+    def create(self, request):
+        serializer = OrderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    permission_classes = [IsAuthenticated]
+
+
+class OrderItemViewSet(viewsets.ViewSet):
+    def list(self, request):
+        queryset = OrderItem.objects.all()
+        serializer = OrderItemSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    def retrieve(self, request, pk=None):
+        queryset = OrderItem.objects.all()
+        orderitem = get_object_or_404(queryset, pk=pk)
+        serializer =  OrderItemSerializer(orderitem)
+        return Response(serializer.data)
+    
+    def create(self, request):
+        serializer = OrderItemSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    permission_classes = [IsAuthenticated]
